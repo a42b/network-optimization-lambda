@@ -24,7 +24,11 @@ Ensure you have **Python 3.8+**, then install required packages:
 ```sh
 pip install localstack awscli-local boto3
 ```
-## Now I will give instructions on running and setting up lambda trigger on uploading file as for powershell as I did
+
+## Setup script
+I tried to create a script for setting up the trigger for lambda in setup_localstack.psl, however better I show how I did it manually and it worked for me.
+
+### Now I will give instructions on running and setting up lambda trigger on uploading file as for powershell as I did
 Run LocalStack to simulate AWS services:
 ```sh
 localstack start -d
@@ -50,9 +54,9 @@ Verify created resources:
 awslocal s3 ls
 awslocal sqs list-queues
 ```
-## Here I also advise checking the urls of the created resources so you can fix them in the lambda function. 
+### Here I also advise checking the urls of the created resources so you can fix them in the lambda function. 
 
-## I already have the zipped function in the repository so you can use that for deploying but also if something needed to be changed here how you can zip the function:
+### I already have the zipped function in the repository so you can use that for deploying but also if something needed to be changed here how you can zip the function:
 ```sh
 Compress-Archive -Path lambda_function.py -DestinationPath lambda_function.zip -Force
 ```
@@ -96,7 +100,7 @@ awslocal lambda add-permission `
 awslocal s3api get-bucket-notification-configuration --bucket network-data-bucket
 ```
 
-## Now we can manually test everything. I left the debug prints because different errors can happen during invoking and to understadn on which step the error occured.
+### Now we can manually test everything. I left the debug prints because different errors can happen during invoking and to understadn on which step the error occured.
 
 Upload Sample Data to S3:
 ```sh
