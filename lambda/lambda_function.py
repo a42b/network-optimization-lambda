@@ -37,30 +37,30 @@ def compute_mst(num_nodes, edges):
             mst_edges.append((cost, node1, node2))
             total_cost += cost
 
-    print(f"✅ MST Computed! Total Cost: {total_cost}, Edges: {mst_edges}")
+    print(f"MST Computed! Total Cost: {total_cost}, Edges: {mst_edges}")
     return total_cost, mst_edges
 
 def lambda_handler(event, context):
-    print("🔄 Lambda triggered with event:", json.dumps(event, indent=2))
+    print("Lambda triggered with event:", json.dumps(event, indent=2))
     
     try:
         record = event["Records"][0]
         bucket_name = record["s3"]["bucket"]["name"]
         file_key = record["s3"]["object"]["key"]
 
-        print(f"📂 Fetching file from S3: s3://{bucket_name}/{file_key}")
+        print(f"Fetching file from S3: s3://{bucket_name}/{file_key}")
 
         # Get S3 file
         try:
-            print(f"🔍 Attempting to get S3 file: Bucket={bucket_name}, Key={file_key}")
+            print(f"Attempting to get S3 file: Bucket={bucket_name}, Key={file_key}")
             file_obj = s3_client.get_object(Bucket=bucket_name, Key=file_key)
             file_content = file_obj["Body"].read().decode("utf-8")
-            print("✅ File successfully retrieved from S3!")
+            print("File successfully retrieved from S3!")
         except Exception as s3_error:
-            print(f"❌ Error accessing S3: {str(s3_error)}")
+            print(f"Error accessing S3: {str(s3_error)}")
             return {"statusCode": 500, "body": f"Error accessing S3: {str(s3_error)}"}
 
-        print("✅ File successfully retrieved from S3!")
+        print("File successfully retrieved from S3!")
 
         # Parse file content
         lines = file_content.strip().split("\n")
@@ -79,7 +79,7 @@ def lambda_handler(event, context):
             "s3_file_path": f"s3://{bucket_name}/{file_key}"
         }
 
-        print("📨 Sending message to SQS:", json.dumps(message, indent=2))
+        print("Sending message to SQS:", json.dumps(message, indent=2))
 
         # Send result to SQS
         try:
@@ -87,14 +87,14 @@ def lambda_handler(event, context):
                 QueueUrl=SQS_QUEUE_URL,
                 MessageBody=json.dumps(message)
             )
-            print(f"✅ SQS Message Sent! Message ID: {response['MessageId']}")
+            print(f"SQS Message Sent! Message ID: {response['MessageId']}")
         except Exception as sqs_error:
-            print(f"❌ Error sending message to SQS: {str(sqs_error)}")
+            print(f"Error sending message to SQS: {str(sqs_error)}")
             return {"statusCode": 500, "body": f"Error sending message to SQS: {str(sqs_error)}"}
 
         return {"statusCode": 200, "body": "Processing complete, result sent to SQS."}
 
     except Exception as e:
-        print(f"❌ Unexpected Error: {str(e)}")
+        print(f"Unexpected Error: {str(e)}")
         return {"statusCode": 500, "body": f"Error: {str(e)}"}
 
